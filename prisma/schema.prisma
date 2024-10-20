@@ -1,0 +1,120 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Enums
+enum Role {
+USER
+ADMIN
+MODERATOR
+}
+
+enum PropertyCategory {
+  appartment
+  garage
+  house
+  villa
+  land
+  studio
+}
+
+enum PropertyState {
+  forSale
+  forRent
+  sold
+}
+
+// Models
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  isAdmin       Boolean @default(false)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Property {
+  id String @id @default(uuid())
+  category PropertyCategory
+  city String
+  neighborhood String
+  state PropertyState
+  isFunded Boolean
+  isNew Boolean
+  price Int
+  size Int
+  rooms Int
+  baths Int
+  images String[]
+  latLong String
+  kuulaId String
+  floors Int
+  description String
+  createdAt DateTime @default(now())
+  ownerId String
+}
+
+model Lead {
+  id String @id @default(uuid())
+
+  category PropertyCategory
+  city String
+  neighborhood String
+  description String
+  fullName String
+  phoneNumber String
+  email String
+}
+ 
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@id([provider, providerAccountId])
+}
+ 
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@id([identifier, token])
+}
+ 
