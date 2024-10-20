@@ -2,7 +2,7 @@
 
 import type { Property } from "@prisma/client";
 import PropertyCard from "../PropertyCard/PropertyCard";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { useEffect, useState } from "react";
 import { getProperties } from "@/lib/actions";
@@ -15,6 +15,16 @@ type PropertyMinus = Omit<
   Property,
   "latLong" | "kuulaId" | "floors" | "description" | "createdAt" | "ownerId"
 >;
+
+type SearchParams = {
+  category: string | null;
+  price: string | null;
+  city: string | null;
+  isFunded: string | null;
+  size: string | null;
+  isNew: string | null;
+  rooms: string | null;
+};
 
 export function PropertySkeleton() {
   return (
@@ -38,59 +48,68 @@ export default function PropertyList({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const kaka = useSearchParams();
+  const totalPages = Math.ceil(propertyCount / PAGE_SIZE);
 
   const clientSearchParams = useSearchParams();
-  const category = clientSearchParams.get("category");
-  const price = clientSearchParams.get("price");
-  const city = clientSearchParams.get("city");
-  const isFunded = clientSearchParams.get("isFunded");
-  const size = clientSearchParams.get("size");
-  const isNew = clientSearchParams.get("isNew");
-  const rooms = clientSearchParams.get("rooms");
 
-  const searchParams = {
-    category,
-    price,
-    city,
-    isFunded,
-    size,
-    isNew,
-    rooms,
-  };
+  const category = clientSearchParams.get("category") || "";
+  const price = clientSearchParams.get("price") || "";
+  const city = clientSearchParams.get("city") || "";
+  const isFunded = clientSearchParams.get("isFunded") || "";
+  const size = clientSearchParams.get("size") || "";
+  const isNew = clientSearchParams.get("isNew") || "";
+  const rooms = clientSearchParams.get("rooms") || "";
+
+  const searchParams = useMemo(
+    () => ({
+      category,
+      price,
+      city,
+      isFunded,
+      size,
+      isNew,
+      rooms,
+    }),
+    [category, price, city, isFunded, size, isNew, rooms]
+  );
 
   const [shownProperties, setShownProperties] = useState(properties);
+  const [loading, setLoading] = useState(false);
   const { ref, inView } = useInView();
   const [page, setPage] = useState(2);
 
   async function loadMoreProperties() {
+    if (loading) return;
+    setLoading(true);
+
     const properties = await getProperties(searchParams, true, page); // 6-10
     setPage((prev) => prev + 1);
     setShownProperties((prev) => [...prev, ...properties]);
+
+    setLoading(false);
   }
 
   useEffect(() => {
-    if (inView) {
+    if (inView && !loading) {
       loadMoreProperties();
     }
-  }, [inView]);
+  }, [inView, loading]);
 
   useEffect(() => {
-    const params = new URLSearchParams(kaka.toString());
-    category && params.set("category", category?.split(",").join(",") as string);
-    price && params.set("price", price?.split(",").join(",") as string);
-    isFunded && params.set("isFunded", String(isFunded));
-    isNew && params.set("isNew", String(isNew));
-    size && params.set("size", size?.split(",").join(",") as string);
-    rooms && params.set("rooms", rooms?.split(",").join(",") as string);
+    function buildQueryParams(params: SearchParams) {
+      const urlSearchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (value) urlSearchParams.set(key, value.toString());
+      });
+      return urlSearchParams;
+    }
 
-    const queryString = params.toString().replace(/%2C/g, ",");
-    router.push(pathname + "?" + queryString, { scroll: false });
+    const params = buildQueryParams(searchParams);
+    router.push(pathname + "?" + params.toString(), { scroll: false });
+
     setShownProperties(properties);
     setPage(2);
-  }, [category, price, city, isFunded, size, isNew, rooms]);
-
-  const totalPages = Math.ceil(propertyCount / PAGE_SIZE);
+  }, [searchParams, pathname, router, properties]);
 
   return (
     <section>
@@ -103,11 +122,8 @@ export default function PropertyList({
           );
         })}
       </div>
-      {page <= totalPages && (
-        <div
-          className="flex justify-center items-center p-4 col-span-1 sm:col-span-2 md:col-span-3"
-          ref={ref}
-        >
+      {page <= totalPages && !loading && (
+        <div className="flex justify-center items-center p-4 col-span-1 sm:col-span-2 md:col-span-3" ref={ref}>
           <Spinner />
         </div>
       )}
