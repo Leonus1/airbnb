@@ -86,7 +86,7 @@ export default function CitiesPicker({
           <div className="flex-1 my-4 overflow-y-auto mb-24">
             {cities.map(({ city, id }) => (
               <div
-                key={city}
+                key={id}
                 onClick={() => tempCityClicked(city)}
                 className="cursor-pointer select-none mx-5 lg:mx-10 px-2 py-3 rounded-lg hover:bg-[#ffefef] transition-colors"
               >

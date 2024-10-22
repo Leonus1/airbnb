@@ -16,7 +16,7 @@ export default function PropertySlider({ isNew, isFunded, images, state, kuulaId
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const kuula = [
-    <div className="w-full h-full absolute transition-transform duration-300">
+    <div key={kuulaId} className="w-full h-full absolute transition-transform duration-300">
       <iframe
         width="100%"
         height="100%"
@@ -51,9 +51,8 @@ export default function PropertySlider({ isNew, isFunded, images, state, kuulaId
           {sliderElements.map((img: any, index: number) => {
             if (index === 0) {
               return (
-                <div>
+                <div key={index}>
                   <div
-                    key={index}
                     className={`w-full h-full absolute transition-transform duration-300 ${
                       index === currentIndex ? "translate-x-0" : "translate-x-full"
                     }`}

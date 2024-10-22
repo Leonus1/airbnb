@@ -46,6 +46,16 @@ export default function Filters({
   const [tempIsNew, setTempIsNew] = useState<boolean | null>(isNew);
   const [tempRooms, setTempRooms] = useState(rooms);
 
+  // On Return, Return UI to current state
+  function returnState() {
+    setTempSelectedCategories(selectedCategories);
+    setTempprice(price);
+    setTempIsFunded(isFunded);
+    setTempSize(size);
+    setTempIsNew(isNew);
+    setTempRooms(rooms);
+  }
+
   useEffect(() => {
     returnState();
   }, [rooms, isNew, size, isFunded, selectedCategories, price]);
@@ -56,16 +66,6 @@ export default function Filters({
 
   const formattedMin = formatPrice(+[tempPrice[0]]);
   const formattedMax = formatPrice(+[tempPrice[1]]);
-
-  // On Return, Return UI to current state
-  function returnState() {
-    setTempSelectedCategories(selectedCategories);
-    setTempprice(price);
-    setTempIsFunded(isFunded);
-    setTempSize(size);
-    setTempIsNew(isNew);
-    setTempRooms(rooms);
-  }
 
   function transferState() {
     const params = new URLSearchParams(searchParams.toString());

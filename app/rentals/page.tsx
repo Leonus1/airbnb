@@ -89,6 +89,8 @@ async function ShowItems({ searchParams }: { searchParams: Property }) {
     .filter((category) => category !== undefined);
 
   try {
+    const propertyCount = await prisma.property.count();
+
     const properties = await prisma.property?.findMany({
       where: {
         state: "forRent",
@@ -138,7 +140,9 @@ async function ShowItems({ searchParams }: { searchParams: Property }) {
     if (!properties) return <WentWrong />;
     if (properties.length < 1) return <NothingFound />;
 
-    return <PropertyList properties={properties} />;
+    return (
+      <PropertyList searchParams={searchParams} propertyCount={propertyCount} properties={properties} />
+    );
   } catch (error) {
     return <WentWrong />;
   }

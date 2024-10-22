@@ -4,7 +4,7 @@ import prisma from "@/lib/db";
 import { Suspense } from "react";
 import WentWrong from "@/components/WentWrong/WentWrong";
 import SearchFilterBar from "@/components/SearchFilterBar/SearchFilterBar";
-import { Property, PropertyCategory } from "@prisma/client";
+import { Property } from "@prisma/client";
 import { getProperties } from "@/lib/actions";
 import NothingFound from "@/components/NothingFound/NothingFound";
 
@@ -83,7 +83,9 @@ async function ShowItems({ searchParams }: { searchParams: any }) {
     // Not Found
     if (properties.length < 1) return <NothingFound />;
 
-    return <PropertyList propertyCount={propertyCount} properties={properties} />;
+    return (
+      <PropertyList searchParams={searchParams} propertyCount={propertyCount} properties={properties} />
+    );
   } catch (error) {
     return <WentWrong />;
   }
