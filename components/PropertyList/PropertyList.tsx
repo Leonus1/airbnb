@@ -37,7 +37,6 @@ export default function PropertyList({
   properties: PropertyMinus[];
 }) {
   const [shownProperties, setShownProperties] = useState(properties);
-  const { ref, inView } = useInView();
   const [page, setPage] = useState(2);
 
   async function loadMoreProperties() {
@@ -65,7 +64,7 @@ export default function PropertyList({
         })}
       </div>
       {page <= totalPages && (
-        <div className="flex items-center justify-center" ref={ref}>
+        <div className="flex items-center justify-center">
           <button
             onClick={loadMoreProperties}
             className="bg-[#FF7B7F] text-white font-semibold rounded-lg px-4 py-2 hover:px-[17] transition-all
