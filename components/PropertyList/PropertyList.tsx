@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { getProperties } from "@/lib/actions";
 import { useInView } from "react-intersection-observer";
 import { PAGE_SIZE } from "@/lib/globalValues";
-import { Spinner } from "../Spinner/Spinner";
 
 type PropertyMinus = Omit<
   Property,
