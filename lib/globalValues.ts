@@ -1,2 +1,2 @@
 // NUMBER OF PROPERTIES SHOWN PER PAGE
-export const PAGE_SIZE = 3;
+export const PAGE_SIZE = 8;

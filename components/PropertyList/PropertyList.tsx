@@ -6,7 +6,6 @@ import { Suspense } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { useEffect, useState } from "react";
 import { getProperties } from "@/lib/actions";
-import { useInView } from "react-intersection-observer";
 import { PAGE_SIZE } from "@/lib/globalValues";
 
 type PropertyMinus = Omit<
@@ -63,7 +62,7 @@ export default function PropertyList({
           );
         })}
       </div>
-      {page <= totalPages && (
+      {shownProperties.length === PAGE_SIZE && (
         <div className="flex items-center justify-center">
           <button
             onClick={loadMoreProperties}
