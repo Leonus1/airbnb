@@ -83,9 +83,7 @@ async function ShowItems({ searchParams }: { searchParams: any }) {
     // Not Found
     if (properties.length < 1) return <NothingFound />;
 
-    return (
-      <PropertyList searchParams={searchParams} propertyCount={propertyCount} properties={properties} />
-    );
+    return <PropertyList searchParams={searchParams} propertyCount={propertyCount} properties={properties} />;
   } catch (error) {
     return <WentWrong />;
   }

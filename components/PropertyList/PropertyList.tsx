@@ -55,11 +55,7 @@ export default function PropertyList({
     <section>
       <div className="mt-8 mb-14 grid lg:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 gap-8 px-5 lg:px-10 ">
         {shownProperties?.map((property) => {
-          return (
-            <Suspense key={property.id} fallback={<PropertySkeleton />}>
-              <PropertyCard property={property} />
-            </Suspense>
-          );
+          return <PropertyCard key={property.id} property={property} />;
         })}
       </div>
       {shownProperties.length === PAGE_SIZE && (
